@@ -1,0 +1,17 @@
+body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;margin:0;background:#f6f7f9;color:#222}
+.wrap{max-width:1200px;margin:0 auto;padding:20px}
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+select,button{font-size:14px;padding:5px 10px;border:1px solid #cfd4da;border-radius:6px;background:#fff;cursor:pointer}
+.range-btn.on{background:#2b5aa7;color:#fff;border-color:#2b5aa7}
+.stamp{margin-left:auto;color:#999;font-size:12px}
+.kpis{display:flex;gap:14px;margin-bottom:14px}
+.kpi{flex:1;background:#fff;border:1px solid #e3e6ea;border-radius:10px;padding:14px 18px}
+.kpi .label{color:#777;font-size:13px}.kpi .num{font-size:26px;font-weight:600;margin-top:4px}
+.charts{display:flex;gap:14px}
+.chart{width:560px;height:300px;background:#fff;border:1px solid #e3e6ea;border-radius:10px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center}
+.modal-box{background:#fff;border-radius:10px;padding:22px 28px;min-width:300px;position:relative}
+.modal-close{position:absolute;right:10px;top:6px;cursor:pointer;font-size:18px;color:#888}
+.modal-total{font-size:18px;margin-top:6px}
+.page{max-width:600px;margin:60px auto;background:#fff;border:1px solid #e3e6ea;border-radius:10px;padding:24px}
+.detail-total{font-size:30px;font-weight:600}

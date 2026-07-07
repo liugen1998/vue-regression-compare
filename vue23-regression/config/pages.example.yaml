@@ -1,0 +1,175 @@
+# =====================================================================
+# vue23-regression 配置模板（权威 schema 示例）
+# 使用方法：复制为 config/pages.yaml 后按注释填写；带 <> 的为必改占位符
+# =====================================================================
+
+global:
+  baseUrl:
+    vue2: "http://<内网Vue2域名或IP:端口>"        # 必填
+    vue3: "http://<内网Vue3域名或IP:端口>"        # 必填，可与 vue2 相同域名不同路径
+
+  auth:
+    strategy: storage            # storage=复用已保存登录态 | scripted=脚本化账号密码登录 | none
+    storageState:
+      vue2: ".auth/state-v2.json"   # 两端可共用同一文件（同域时）
+      vue3: ".auth/state-v3.json"
+    probeUrl: "/"                # 启动时验证登录态有效性的探针路径（判定条件：不跳转登录页）
+    scripted:                    # strategy=scripted 时启用；凭据从环境变量读取
+      loginPath: "/login"
+      usernameSelector: "#username"
+      passwordSelector: "#password"
+      submitSelector: "button[type=submit]"
+      usernameEnv: "VMR_USER"
+      passwordEnv: "VMR_PASS"
+
+  browser:
+    viewport: { width: 1600, height: 900 }
+    locale: "zh-CN"
+    timezone: "Asia/Shanghai"
+    freezeClock: false           # true 时固定页面时间（Playwright clock），慎用
+    headless: true
+
+  waits:
+    quietMs: 800                 # 网络静默窗口
+    readyTimeoutMs: 30000
+    chartSettleMs: 1200          # 图表动画静默上限（配合 canvas 稳定性判定）
+
+  tolerance:
+    numberAbs: 0                 # replay 模式默认严格相等；live 模式可按页面放宽
+    numberRelPct: 0
+    pixelThreshold: 0.1          # pixelmatch 单像素敏感度
+    passDiffRatio: 0.002         # 差异像素占比 ≤ 0.2% 直接视觉通过
+    vlReviewMaxRegions: 4        # 超阈值时最多裁剪 4 个差异区送 VL 复核
+
+  vl:                            # Qwen2.5-VL（OpenAI 兼容接口）
+    baseUrlEnv: "VL_BASE_URL"    # 例如 http://<内网VL服务>:8000/v1
+    apiKeyEnv: "VL_API_KEY"
+    modelEnv: "VL_MODEL"         # 例如 qwen2.5-vl-72b-instruct
+    timeoutMs: 60000
+    maxConcurrent: 2
+
+  perf:
+    warmup: 1
+    samples: 5
+    maxRatio: 1.10               # v3 中位数 ≤ v2 中位数 × 1.10
+    minAbsMs: 100                # 且差值需超过 100ms 才判退化（双条件）
+    cpuThrottle: 1               # >1 时启用 CDP CPU 降速模拟低端机
+    metrics: [fcp, lcp, domContentLoaded, load, longTasksTotal, apiTotal]
+
+  combos:
+    default: default             # 未指定 --combo 时的策略
+    maxCases: 300                # 安全熔断上限（full/sample 共用）
+
+# =====================================================================
+# 页面清单（约 20 项）。示例 1 为完整示例，示例 2 为最小示例。
+# =====================================================================
+pages:
+  - id: sales-dashboard          # 唯一 ID，用于 --pages 过滤与产物目录名
+    name: "销售看板"
+    path:
+      vue2: "/v2/sales/dashboard"
+      vue3: "/sales/dashboard"
+    readyWhen:                   # 在通用就绪协议之上追加的页面就绪条件
+      selector: ".kpi-card"
+      apiDone: ["**/api/**/summary"]
+    apiCapture: ["**/api/**"]    # 参与捕获/录制/比对的接口范围
+    apiMap:                      # Vue2→Vue3 接口路径映射（配对与回放共用）
+      - { from: "^/api/v1/(.*)$", to: "/api/$1" }
+    apiIgnoreFields:             # 归一化时剔除的字段（JSONPath）
+      - "$.traceId"
+      - "$..timestamp"
+      - "$..requestId"
+    unorderedPaths: []           # 响应中允许乱序比较的数组路径，如 "$.data.list"
+    masks:                       # 截图遮罩（动态区域）
+      - ".last-update-time"
+      - ".app-version"
+
+    filters:
+      - key: dateRange
+        name: "统计周期"
+        type: daterange
+        default: "近7天"
+        values:                  # daterange 用预设快捷项表达；自定义区间用 custom 步骤
+          - { label: "近7天",  clickSelector: ".range-quick >> text=近7天" }
+          - { label: "近30天", clickSelector: ".range-quick >> text=近30天" }
+      - key: region
+        name: "区域"
+        type: select
+        selector: "#regionSelect"
+        default: "全国"
+        discover: false          # true 时运行期展开下拉自动枚举全部选项
+        values:
+          - { label: "全国", option: "全国" }
+          - { label: "华东", option: "华东" }
+          - { label: "华北", option: "华北" }
+      - key: channel
+        name: "渠道"
+        type: multiselect
+        selector: "#channelSelect"
+        default: "全部"
+        values:
+          - { label: "全部",     options: [] }
+          - { label: "线上",     options: ["线上"] }
+          - { label: "线上线下", options: ["线上", "线下"] }
+    submitSelector: ".btn-query"   # 设置完筛选后统一点击的查询按钮（无则省略）
+    constraints:                   # 组合约束
+      - exclude: { region: "华北", channel: "线上线下" }   # 剔除无效组合示例
+      # - when: { region: "华东" }                          # 依赖联动示例
+      #   then: { channel: ["线上"] }
+
+    metrics:
+      - id: gmv
+        name: "成交额"
+        type: dom-text
+        selector: ".kpi-gmv .num"
+        normalize: [stripComma, stripUnit]   # 剥离千分位与单位后按数值比较
+      - id: order-count
+        name: "订单数"
+        type: dom-text
+        selector: ".kpi-order .num"
+      - id: trend-series
+        name: "趋势图数据"
+        type: echarts
+        chart: "#trendChart"
+        pick: "series[0].data"               # getOption() 内的取值路径（仅 L1 可用，失败自动降级）
+      - id: gmv-api
+        name: "成交额-接口真值"
+        type: api-field
+        request: "**/summary"
+        path: "$.data.gmv"                   # live 模式用于本端自洽校验（渲染值 vs 接口值）
+
+    interactions:
+      - id: drill-region
+        name: "柱图下钻到区域明细"
+        steps:
+          - { do: echartsClick, chart: "#barChart", dataIndex: 2 }   # L1 精确；L2 兜底改用 relX/relY
+          # - { do: echartsClick, chart: "#barChart", relX: 0.42, relY: 0.6 }
+          - { do: expectNav, urlPattern: "**/region/**" }            # 校验两端下钻目标一致
+          - { do: waitReady }
+          - { do: compare, metrics: [detail-total], visual: true, api: true }
+          - { do: goBack }
+        extraMetrics:                       # 仅该交互目标页使用的指标定义
+          - { id: detail-total, name: "明细合计", type: dom-text, selector: ".detail-total" }
+      - id: detail-modal
+        name: "查看明细弹窗"
+        steps:
+          - { do: click, selector: ".btn-detail" }
+          - { do: expectModal, selector: ".el-dialog" }
+          - { do: compare, scope: ".el-dialog", visual: true }       # 对弹窗区域截图+比对
+          - { do: closeModal, selector: ".el-dialog__close" }
+      - id: hover-trend
+        name: "趋势图悬停提示"
+        steps:
+          - { do: echartsHoverSweep, chart: "#trendChart", points: 6, compare: tooltip }
+
+    perf:
+      interactions: [drill-region]          # 除首屏外，追加测量的交互耗时
+      # samples / maxRatio 等可在此覆盖 global.perf
+
+  # ------------------ 最小示例：只比默认状态 ------------------
+  - id: simple-report
+    name: "简单报表页"
+    path: { vue2: "/v2/report/simple", vue3: "/report/simple" }
+    apiCapture: ["**/api/report/**"]
+    metrics:
+      - { id: total, name: "总计", type: dom-text, selector: ".total-num" }

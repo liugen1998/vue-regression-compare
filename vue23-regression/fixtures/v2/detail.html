@@ -1,0 +1,11 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>区域明细（Vue2）</title>
+<link rel="stylesheet" href="/shared/styles.css"></head><body>
+<div class="page"><h2 class="detail-name">加载中…</h2><div class="detail-total"></div><span class="stamp"></span></div>
+<script>
+const name = new URLSearchParams(location.search).get('name') || '';
+document.querySelector('.stamp').textContent = '渲染时间 ' + new Date().toLocaleTimeString();
+fetch('/api/region?name=' + encodeURIComponent(name)).then(r => r.json()).then(d => {
+  document.querySelector('.detail-name').textContent = d.name + ' 区域明细';
+  document.querySelector('.detail-total').textContent = String(d.total);
+});
+</script></body></html>

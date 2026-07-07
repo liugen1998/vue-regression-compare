@@ -1,0 +1,81 @@
+# fixtures 模拟站的比对配置（端到端自测/演示用）
+global:
+  baseUrl:
+    vue2: "http://127.0.0.1:4173"
+    vue3: "http://127.0.0.1:4173"
+  auth: { strategy: none }
+  browser:
+    viewport: { width: 1280, height: 760 }
+    headless: true
+  waits: { quietMs: 600, readyTimeoutMs: 25000, chartSettleMs: 1500 }
+  tolerance:
+    numberAbs: 0
+    numberRelPct: 0
+    pixelThreshold: 0.1
+    passDiffRatio: 0.002
+    vlReviewMaxRegions: 4
+  perf:
+    warmup: 1
+    samples: 5
+    maxRatio: 1.10
+    minAbsMs: 100
+    metrics: [fcp, domContentLoaded, load, readyTime, apiTotal]
+  combos: { default: default, maxCases: 300 }
+
+pages:
+  - id: fixture-dashboard
+    name: "销售看板（fixtures）"
+    path: { vue2: "/v2/index.html", vue3: "/v3/index.html" }
+    readyWhen:
+      selector: ".kpi-gmv .num"
+      apiDone: ["**/api/summary**"]
+    apiCapture: ["**/api/**"]
+    apiIgnoreFields: ["$..traceId", "$..timestamp"]
+    masks: [".stamp"]
+    filters:
+      - key: range
+        name: "统计周期"
+        type: daterange
+        default: "近7天"
+        values:
+          - { label: "近7天",  clickSelector: ".range-btn[data-r=近7天]" }
+          - { label: "近30天", clickSelector: ".range-btn[data-r=近30天]" }
+      - key: region
+        name: "区域"
+        type: select
+        selector: "#regionSelect"
+        default: "全国"
+        values:
+          - { label: "全国", option: "全国" }
+          - { label: "华东", option: "华东" }
+          - { label: "华北", option: "华北" }
+    metrics:
+      - { id: gmv,     name: "成交额",   type: dom-text, selector: ".kpi-gmv .num",    normalize: [stripComma] }
+      - { id: orders,  name: "订单数",   type: dom-text, selector: ".kpi-orders .num" }
+      - { id: users,   name: "活跃用户", type: dom-text, selector: ".kpi-users .num" }
+      - { id: gmv-api, name: "成交额-接口真值", type: api-field, request: "**/api/summary**", path: "$.gmv" }
+    interactions:
+      - id: drill-region
+        name: "柱图下钻区域明细"
+        steps:
+          - { do: echartsClick, chart: "#barChart", dataIndex: 2, relX: 0.647, relY: 0.55 }
+          - { do: expectNav, urlPattern: "**/detail.html*" }
+          - { do: compare, metrics: [detail-total], visual: true }
+          - { do: goBack }
+        extraMetrics:
+          - { id: detail-total, name: "区域明细合计", type: dom-text, selector: ".detail-total" }
+      - id: detail-modal
+        name: "查看明细弹窗"
+        steps:
+          - { do: click, selector: ".btn-detail" }
+          - { do: expectModal, selector: ".modal" }
+          - { do: compare, scope: ".modal-box", metrics: [modal-total], visual: true }
+          - { do: closeModal, selector: ".modal-close" }
+        extraMetrics:
+          - { id: modal-total, name: "弹窗合计文案", type: dom-text, selector: ".modal-total" }
+      - id: hover-trend
+        name: "趋势图悬停提示"
+        steps:
+          - { do: echartsHoverSweep, chart: "#trendChart", points: 7, compare: tooltip }
+    perf:
+      interactions: []

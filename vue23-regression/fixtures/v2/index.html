@@ -1,0 +1,67 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>销售看板（Vue2）</title>
+<link rel="stylesheet" href="/shared/styles.css"></head><body>
+<div id="app" class="wrap">
+  <div class="toolbar">
+    <select id="regionSelect" v-model="region" @change="load">
+      <option>全国</option><option>华东</option><option>华北</option>
+    </select>
+    <button class="range-btn" :class="{on:range==='近7天'}" data-r="近7天" @click="setRange('近7天')">近7天</button>
+    <button class="range-btn" :class="{on:range==='近30天'}" data-r="近30天" @click="setRange('近30天')">近30天</button>
+    <button class="btn-detail" @click="openModal">查看明细</button>
+    <span class="stamp">渲染时间 {{stamp}}</span>
+  </div>
+  <div class="kpis">
+    <div class="kpi kpi-gmv"><div class="label">成交额</div><div class="num">{{gmvText}}</div></div>
+    <div class="kpi kpi-orders"><div class="label">订单数</div><div class="num">{{orders}}</div></div>
+    <div class="kpi kpi-users"><div class="label">活跃用户</div><div class="num">{{users}}</div></div>
+  </div>
+  <div class="charts"><div id="barChart" class="chart"></div><div id="trendChart" class="chart"></div></div>
+  <div class="modal" v-if="modal"><div class="modal-box">
+    <span class="modal-close" @click="modal=false">×</span>
+    <div>数据明细</div><div class="modal-total">{{modalText}}</div>
+  </div></div>
+</div>
+<script src="/vendor/vue2.min.js"></script>
+<script src="/vendor/echarts.min.js"></script>
+<script>
+new Vue({
+  el: '#app',
+  data: { region: '全国', range: '近7天', gmvText: '', orders: '', users: '', modal: false, modalText: '', stamp: new Date().toLocaleTimeString() },
+  mounted() { this.load(); },
+  methods: {
+    q() { return 'range=' + encodeURIComponent(this.range) + '&region=' + encodeURIComponent(this.region); },
+    setRange(r) { this.range = r; this.load(); },
+    tipVal(v, i) { return String(v); },
+    fmtGmv(v) { return Number(v).toLocaleString('en-US'); },
+    async load() {
+      const s = await (await fetch('/api/summary?' + this.q())).json();
+      this.gmvText = this.fmtGmv(s.gmv); this.orders = String(s.orders); this.users = String(s.users);
+      const b = await (await fetch('/api/bars?' + this.q())).json();
+      const t = await (await fetch('/api/trend?' + this.q())).json();
+      this.renderBar(b); this.renderTrend(t);
+    },
+    renderBar(d) {
+      const el = document.getElementById('barChart');
+      const c = echarts.getInstanceByDom(el) || echarts.init(el);
+      c.setOption({ animation: false, grid: { top: 20, left: 50, right: 10, bottom: 24 },
+        xAxis: { type: 'category', data: d.cats }, yAxis: { type: 'value' },
+        series: [{ type: 'bar', data: d.values }] });
+      c.off('click'); c.on('click', p => { location.href = 'detail.html?name=' + encodeURIComponent(p.name); });
+    },
+    renderTrend(d) {
+      const el = document.getElementById('trendChart');
+      const c = echarts.getInstanceByDom(el) || echarts.init(el);
+      const self = this;
+      c.setOption({ animation: false, grid: { top: 20, left: 50, right: 10, bottom: 24 },
+        xAxis: { type: 'category', data: d.days }, yAxis: { type: 'value' },
+        tooltip: { trigger: 'axis', transitionDuration: 0, formatter: ps => ps[0].name + '：' + self.tipVal(ps[0].value, ps[0].dataIndex) },
+        series: [{ type: 'line', data: d.values }] });
+    },
+    async openModal() {
+      const d = await (await fetch('/api/detail?' + this.q())).json();
+      this.modalText = '明细合计：' + d.total + ' 条';
+      this.modal = true;
+    },
+  },
+});
+</script></body></html>
