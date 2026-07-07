@@ -1,0 +1,6 @@
+node_modules/
+reports/
+.env
+workspace/auth/*.json
+*.log
+.DS_Store

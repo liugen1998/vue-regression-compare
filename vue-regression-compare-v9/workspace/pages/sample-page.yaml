@@ -1,0 +1,101 @@
+# 示例页面配置。复制本文件后替换 URL、选择器、筛选器、页签和交互点。
+pageKey: sample-page
+pageName: 示例分析页
+vue2Url: "http://vue2.example.internal/sample"
+vue3Url: "http://vue3.example.internal/sample"
+testStrategy: standard
+
+storageState: "workspace/auth/storageState.json"
+waitForSelector: "body"
+waitForHiddenSelectors:
+  - ".loading"
+waitForNetworkIdle: true
+waitAfterMs: 200
+timeoutMs: 60000
+
+autoDiscoverInteractions: true
+interactionCheckMode: conservative
+interactionUniqueTextMatch: true
+reportVue3ExtraInteractions: true
+interactionExtraPolicy: manual
+interactionScanLimit: 120
+
+metrics:
+  - name: 客户数
+    selector: "[data-testid='customer-count']"
+    critical: true
+  - name: 成交金额
+    selector: "[data-testid='deal-amount']"
+    critical: true
+  - name: 明细表格
+    selector: "[data-testid='main-table']"
+    type: table
+    all: true
+
+filters:
+  # 时间：标准模式只取上一个时间点和当前时间点。
+  - name: 时间
+    selector: "[data-testid='date-select']"
+    type: select
+    businessType: time
+    strategy: previous-and-current
+    submitSelector: "[data-testid='search-button']"
+    values:
+      - label: 上月
+        value: lastMonth
+      - label: 本月
+        value: currentMonth
+
+  # 地区：如果有海外，国内1个+海外1个；只有中国则只取1个中国地区。
+  - name: 地区
+    selector: "[data-testid='region-select']"
+    type: select
+    businessType: region
+    strategy: region-representative
+    submitSelector: "[data-testid='search-button']"
+    preferredDomestic:
+      - 中国
+      - 北京
+      - 上海
+    preferredOverseas:
+      - 海外
+      - 美国
+      - 新加坡
+
+  # 普通筛选器：标准/严格模式默认全量遍历。
+  - name: 状态
+    selector: "[data-testid='status-select']"
+    type: select
+    businessType: status
+    strategy: all
+    submitSelector: "[data-testid='search-button']"
+
+tabs:
+  strategy: all
+  items:
+    - name: 总览
+      selector: "[data-testid='tab-overview']"
+    - name: 明细
+      selector: "[data-testid='tab-detail']"
+    - name: 趋势
+      selector: "[data-testid='tab-trend']"
+
+interactions:
+  - name: 客户数下钻
+    type: click
+    selector: "[data-testid='customer-count']"
+    waitForSelector: "[data-testid='drill-table']"
+    compareUrl: true
+    compareSelectors:
+      - "[data-testid='drill-title']"
+      - "[data-testid='drill-table']"
+    screenshot: true
+
+  - name: 明细弹窗
+    type: click
+    selector: "[data-testid='detail-button']"
+    waitForSelector: "[data-testid='detail-modal']"
+    compareSelectors:
+      - "[data-testid='detail-modal']"
+    closeSelector: "[data-testid='modal-close']"
+    screenshot: true

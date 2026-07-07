@@ -1,0 +1,29 @@
+{
+  "name": "vue-regression-compare",
+  "version": "0.9.0",
+  "private": true,
+  "description": "带 Web UI、批量导入、策略预览、覆盖率报告、性能多次中位数和人工确认登记的 Vue2/Vue3 升级验收对比工具。",
+  "type": "module",
+  "scripts": {
+    "setup": "tsx src/setup.ts",
+    "compare": "tsx src/index.ts",
+    "compare:headed": "tsx src/index.ts --headed",
+    "validate-config": "tsx src/validateConfig.ts",
+    "check-selectors": "tsx src/checkSelectors.ts",
+    "install:browsers": "playwright install chromium",
+    "auth": "playwright codegen --save-storage=workspace/auth/storageState.json",
+    "typecheck": "tsc --noEmit",
+    "ui": "tsx src/uiServer.ts",
+    "import-pages": "tsx src/importPagesCli.ts"
+  },
+  "dependencies": {
+    "exceljs": "latest",
+    "playwright": "latest",
+    "tsx": "latest",
+    "typescript": "latest",
+    "yaml": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "latest"
+  }
+}
