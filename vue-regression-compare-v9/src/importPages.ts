@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import ExcelJS from 'exceljs';
 import YAML from 'yaml';
+import { defaultReadinessConfig } from './defaults.js';
 import type { PageConfig, TestStrategy } from './types.js';
 import { ensureDir, sanitizeFileName } from './utils.js';
 
@@ -94,6 +95,7 @@ export async function importPageRows(rows: ImportedPageRow[], targetDir: string,
       waitForSelector: 'body',
       waitForNetworkIdle: true,
       waitAfterMs: 300,
+      readiness: defaultReadinessConfig(),
       timeoutMs: 60000,
       storageState: 'workspace/auth/storageState.json',
       autoDiscoverInteractions: true,

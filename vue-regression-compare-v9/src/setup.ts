@@ -5,6 +5,7 @@ import { stdin as input, stdout as output } from 'node:process';
 import YAML from 'yaml';
 import { spawn } from 'node:child_process';
 import { detectBrowserExecutable, launchManagedBrowser, writeEnvValue } from './browser.js';
+import { defaultReadinessConfig } from './defaults.js';
 import type { PageConfig } from './types.js';
 import { ensureDir, pathExists, sanitizeFileName } from './utils.js';
 
@@ -48,6 +49,7 @@ async function main(): Promise<void> {
       waitForSelector: 'body',
       waitForNetworkIdle: true,
       waitAfterMs: 300,
+      readiness: defaultReadinessConfig(),
       timeoutMs: 60000,
       storageState: await pathExists(authPath) ? authPath : undefined,
       autoDiscoverInteractions: true,

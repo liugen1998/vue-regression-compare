@@ -48,6 +48,8 @@ export interface PageConfig {
   waitForNetworkIdle?: boolean;
   /** 页面就绪后额外等待，适合动画或异步渲染。 */
   waitAfterMs?: number;
+  /** 更严格的页面稳定协议。默认开启，用于避免页面仍在 Loading/异步渲染时开始比较。 */
+  readiness?: ReadinessConfig;
   timeoutMs?: number;
   /** Playwright 登录态文件，例如 auth/storageState.json。 */
   storageState?: string;
@@ -85,6 +87,29 @@ export interface PageConfig {
   /** 页签、指标维度切换等展示类入口。标准模式/严格模式默认全量遍历。 */
   tabs?: TabGroupConfig | TabConfig[];
   interactions?: InteractionConfig[];
+}
+
+export interface ReadinessConfig {
+  /** 是否等待 fetch/XHR 水位归零并保持静默。默认 true；长轮询页面可设 false。 */
+  waitForRequestIdle?: boolean;
+  /** 是否等待 DOM mutation 保持静默。默认 true。 */
+  waitForDomStable?: boolean;
+  /** DOM/request 静默窗口，默认 800ms。 */
+  stableQuietMs?: number;
+  /** 是否启用常见 Loading 选择器自动识别。默认 true。 */
+  waitForCommonLoading?: boolean;
+  /** 业务自定义 Loading/骨架屏/遮罩选择器；会和 waitForHiddenSelectors 一起等待消失。 */
+  loadingSelectors?: string[];
+  /** 业务自定义 Loading 文案；短文本元素命中时会等待消失。 */
+  loadingText?: string[];
+  /** 是否等待 canvas/ECharts 画面稳定。默认 true。 */
+  waitForCanvasStable?: boolean;
+  /** canvas 稳定等待上限，默认 1200ms。 */
+  canvasSettleMs?: number;
+  /** 截图前是否自动滚动到底再回顶，触发懒加载。默认 true。 */
+  autoScrollBeforeScreenshot?: boolean;
+  /** 是否注入 CSS 关闭动画/过渡/光标闪烁。默认 true。 */
+  disableAnimations?: boolean;
 }
 
 export interface MetricConfig {

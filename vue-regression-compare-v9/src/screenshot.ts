@@ -1,6 +1,7 @@
 import path from 'node:path';
 import type { Page } from 'playwright';
 import type { PageConfig, ScenarioContext } from './types.js';
+import { preparePageForScreenshot } from './pageOps.js';
 import { ensureDir, relPath, sanitizeFileName } from './utils.js';
 
 export interface ScreenshotPair {
@@ -23,6 +24,11 @@ export async function capturePagePair(
   const base = sanitizeFileName(suffix);
   const vue2Path = path.join(dir, `${base}_vue2.png`);
   const vue3Path = path.join(dir, `${base}_vue3.png`);
+
+  await Promise.all([
+    preparePageForScreenshot(vue2Page, cfg),
+    preparePageForScreenshot(vue3Page, cfg)
+  ]);
 
   await Promise.all([
     options.vue2HighlightSelector ? highlightElements(vue2Page, options.vue2HighlightSelector) : Promise.resolve(0),

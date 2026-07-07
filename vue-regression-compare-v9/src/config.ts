@@ -168,6 +168,36 @@ export function collectConfigIssues(cfg: unknown, file = ''): ValidationIssue[] 
   if (c.waitAfterMs !== undefined && (typeof c.waitAfterMs !== 'number' || c.waitAfterMs < 0)) {
     push('ERROR', 'waitAfterMs', 'waitAfterMs 必须是非负数', c.pageKey);
   }
+  if (c.waitForSelector === 'body') {
+    push('WARN', 'waitForSelector', 'body 只能作为兜底等待区域，复杂页面建议配置主容器、核心卡片或表格容器', c.pageKey, '例如 [data-testid="main-content"]');
+  }
+  validateStringArray(c.waitForHiddenSelectors, 'waitForHiddenSelectors');
+  if (c.readiness !== undefined) {
+    if (!c.readiness || typeof c.readiness !== 'object' || Array.isArray(c.readiness)) {
+      push('ERROR', 'readiness', 'readiness 必须是对象', c.pageKey);
+    } else {
+      const readiness = c.readiness as Record<string, unknown>;
+      for (const key of [
+        'waitForRequestIdle',
+        'waitForDomStable',
+        'waitForCommonLoading',
+        'waitForCanvasStable',
+        'autoScrollBeforeScreenshot',
+        'disableAnimations'
+      ]) {
+        if (readiness[key] !== undefined && typeof readiness[key] !== 'boolean') {
+          push('ERROR', `readiness.${key}`, '必须是 boolean', c.pageKey);
+        }
+      }
+      for (const key of ['stableQuietMs', 'canvasSettleMs']) {
+        if (readiness[key] !== undefined && (typeof readiness[key] !== 'number' || readiness[key] < 0)) {
+          push('ERROR', `readiness.${key}`, '必须是非负数', c.pageKey);
+        }
+      }
+      validateStringArray(readiness.loadingSelectors, 'readiness.loadingSelectors');
+      validateStringArray(readiness.loadingText, 'readiness.loadingText');
+    }
+  }
   if (c.interactionExtraPolicy && !['manual', 'fail', 'ignore'].includes(c.interactionExtraPolicy)) {
     push('ERROR', 'interactionExtraPolicy', '必须是 manual/fail/ignore', c.pageKey);
   }
@@ -233,4 +263,17 @@ export function collectConfigIssues(cfg: unknown, file = ''): ValidationIssue[] 
   }
 
   return issues;
+
+  function validateStringArray(value: unknown, field: string): void {
+    if (value === undefined) return;
+    if (!Array.isArray(value)) {
+      push('ERROR', field, '必须是字符串数组', c.pageKey);
+      return;
+    }
+    for (const [idx, item] of value.entries()) {
+      if (typeof item !== 'string' || !item.trim()) {
+        push('ERROR', `${field}[${idx}]`, '必须是非空字符串', c.pageKey);
+      }
+    }
+  }
 }

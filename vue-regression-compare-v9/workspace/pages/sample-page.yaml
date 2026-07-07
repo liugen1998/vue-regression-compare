@@ -11,6 +11,23 @@ waitForHiddenSelectors:
   - ".loading"
 waitForNetworkIdle: true
 waitAfterMs: 200
+readiness:
+  waitForRequestIdle: true
+  waitForDomStable: true
+  stableQuietMs: 800
+  waitForCommonLoading: true
+  loadingSelectors:
+    - ".loading"
+    - ".el-loading-mask"
+    - ".ant-spin-spinning"
+  loadingText:
+    - "Loading"
+    - "加载中"
+    - "正在加载"
+  waitForCanvasStable: true
+  canvasSettleMs: 1200
+  autoScrollBeforeScreenshot: true
+  disableAnimations: true
 timeoutMs: 60000
 
 autoDiscoverInteractions: true

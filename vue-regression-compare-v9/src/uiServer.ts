@@ -9,6 +9,7 @@ import { importPageRows, parseCsvPageTable, parseMarkdownPageTable, parseXlsxPag
 import { estimatePlan } from './plan.js';
 import { detectBrowserExecutable, writeEnvValue } from './browser.js';
 import { collectConfigIssues, loadAllPageConfigFiles, loadPageConfigs } from './config.js';
+import { defaultReadinessConfig } from './defaults.js';
 import type { PageConfig } from './types.js';
 import { ensureDir, nowStamp, pathExists } from './utils.js';
 
@@ -146,6 +147,7 @@ async function handleSavePage(req: http.IncomingMessage, res: http.ServerRespons
       waitForSelector: String(p.waitForSelector ?? 'body').trim() || 'body',
       waitForNetworkIdle: p.waitForNetworkIdle !== false,
       waitAfterMs: Number(p.waitAfterMs ?? 300),
+      readiness: defaultReadinessConfig(),
       timeoutMs: Number(p.timeoutMs ?? 60000),
       storageState: String(p.storageState ?? 'workspace/auth/storageState.json').trim(),
       autoDiscoverInteractions: p.autoDiscoverInteractions !== false,

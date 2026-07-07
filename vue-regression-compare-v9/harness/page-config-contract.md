@@ -19,6 +19,32 @@
 - `waitAfterMs`：页面业务渲染额外等待时间。
 - `timeoutMs`：页面打开或交互超时。
 
+## 页面就绪 readiness
+
+v9 默认启用更严格的页面稳定协议，避免页面仍处在 Loading、接口未完成、DOM 还在渲染时就开始比较。
+
+```yaml
+readiness:
+  waitForRequestIdle: true          # 等 fetch/XHR pending 归零
+  waitForDomStable: true            # 等 DOM mutation 静默
+  stableQuietMs: 800                # 静默窗口
+  waitForCommonLoading: true        # 自动识别常见 loading/spin/skeleton
+  loadingSelectors:
+    - ".el-loading-mask"
+    - ".ant-spin-spinning"
+  loadingText:
+    - "加载中"
+    - "正在加载"
+  waitForCanvasStable: true         # 等 canvas/ECharts 连续稳定
+  canvasSettleMs: 1200
+  autoScrollBeforeScreenshot: true  # 截图前滚动预热懒加载
+  disableAnimations: true           # 关闭动画/过渡/光标闪烁
+```
+
+- 长轮询或 SSE 页面如果一直有请求，可把 `readiness.waitForRequestIdle` 设为 `false`，但仍建议保留 `waitForDomStable` 和 Loading 检测。
+- 业务 Loading 不在常见选择器内时，优先补 `readiness.loadingSelectors` 或 `waitForHiddenSelectors`。
+- `waitForSelector: body` 只是兜底；正式页面应配置主容器、核心卡片或表格容器。
+
 ## 指标 metrics
 
 指标用于回答“Vue3 是否展示了同样的业务结果”。
