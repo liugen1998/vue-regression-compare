@@ -12,6 +12,23 @@ export function compareMetricRows(
   const names = new Set([...vue2ByName.keys(), ...vue3ByName.keys()]);
   const rows: ResultRow[] = [];
 
+  if (names.size === 0) {
+    return [{
+      ...scenario,
+      category: '指标描述一致',
+      itemName: '指标配置',
+      vue2Value: '[NO_METRICS_CONFIGURED]',
+      vue3Value: '[NO_METRICS_CONFIGURED]',
+      diffSummary: '当前页面未配置 metrics，指标描述一致未实际验证。',
+      status: '需人工确认',
+      attribution: '覆盖缺口',
+      severity: 'S2一般',
+      errorType: '未配置指标',
+      message: '未配置指标时不能判定 Vue2/Vue3 展示值一致。',
+      suggestion: '请在页面配置中补充关键数字、表格、标题、空态等 metrics；优先使用 data-testid 等稳定 selector。'
+    }];
+  }
+
   for (const name of names) {
     const vue2Metric = vue2ByName.get(name);
     const vue3Metric = vue3ByName.get(name);

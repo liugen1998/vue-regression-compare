@@ -14,16 +14,17 @@
     "auth": "playwright codegen --save-storage=workspace/auth/storageState.json",
     "typecheck": "tsc --noEmit",
     "ui": "tsx src/uiServer.ts",
-    "import-pages": "tsx src/importPagesCli.ts"
+    "import-pages": "tsx src/importPagesCli.ts",
+    "test": "tsx --test \"src/**/*.test.ts\""
   },
   "dependencies": {
-    "exceljs": "latest",
-    "playwright": "latest",
-    "tsx": "latest",
-    "typescript": "latest",
-    "yaml": "latest"
+    "exceljs": "^4.4.0",
+    "playwright": "^1.61.1",
+    "tsx": "^4.23.0",
+    "typescript": "^6.0.3",
+    "yaml": "^2.9.0"
   },
   "devDependencies": {
-    "@types/node": "latest"
+    "@types/node": "^26.1.0"
   }
 }

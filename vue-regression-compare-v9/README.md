@@ -7,7 +7,7 @@
 1. **指标丢失修复**：截图异常不会吞掉指标结果。`attachMetricEvidence` 仅把截图降级为“无截图”，指标行仍写入 `result.json`、HTML 和 Excel。
 2. **性能多次采样**：新增 `--runs N`。当 `N > 1` 时，同一场景执行 N 次，性能项取 Vue2/Vue3 中位数，避免单次网络波动误报。
 3. **交互文本空格归一化**：自动交互匹配默认去除半角/全角空格，避免“查 询”与“查询”被误判。
-4. **覆盖率报告落地**：CLI 输出提示 `coverage.json`；HTML/Excel 均包含覆盖情况。
+4. **页面覆盖概览**：HTML/Excel 用每页概览展示指标、筛选器、页签、交互和性能覆盖缺口，不再在报告里展开策略预览。
 5. **Web UI 增强**：UI 支持查看历史报告、按当前策略重跑、记录人工确认项。
 6. **页面稳定协议**：打开页面、筛选、页签、交互和截图前都会等待请求水位、DOM 静默、Loading 消失和 canvas 稳定，避免页面仍在 Loading 时开始比较。
 
@@ -39,7 +39,7 @@ UI 支持：
 
 - 三列页面清单导入：`页面 | VUE2链接 | VUE3链接`
 - 页面配置查看/编辑
-- 策略预览
+- 执行预估
 - 启动配置校验、选择器检查、页面对比
 - 历史报告查看
 - 按当前页面和策略重跑
@@ -80,15 +80,15 @@ reports/YYYYMMDD_HHMMSS/
 ├── report.html
 ├── report.xlsx
 ├── result.json
-├── coverage.json
-└── plan-preview.json
+└── coverage.json
 ```
+
+`coverage.json` 是机器可读数据；用户主要查看 `report.html` 或 `report.xlsx`。
 
 Excel 包含：
 
 - 明细
-- 覆盖情况
-- 策略预览
+- 页面覆盖概览
 - 总览
 
 ## 性能判定

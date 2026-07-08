@@ -28,7 +28,7 @@ export function estimatePlan(cfg: PageConfig, mode: RunMode): PlanPreview {
   if (tabs.length === 0 && shouldRunTabs(effective)) warnings.push('未配置页签，页签全量遍历不会执行。');
   if ((cfg.interactions?.length ?? 0) === 0) warnings.push('未配置关键 interactions，下钻/弹窗/tooltip 深度验证不会执行。');
   for (const f of cfg.filters ?? []) {
-    if (!f.values || f.values.length === 0) warnings.push(`筛选器 ${f.name} 未显式配置 values，策略预览只能估算；运行时会尝试从 Vue2 页面读取。`);
+    if (!f.values || f.values.length === 0) warnings.push(`筛选器 ${f.name} 未显式配置 values，执行预估只能估算；运行时会尝试从 Vue2 页面读取。`);
   }
 
   const filterScenarios = (cfg.filters ?? []).map(f => {

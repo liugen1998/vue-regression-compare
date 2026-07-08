@@ -3,45 +3,303 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Vue升级一致性核对平台</title>
+  <title>Vue 回归对比工作台</title>
   <style>
-    :root{--bg:#f5f7fb;--panel:#fff;--line:#e5e7eb;--text:#111827;--muted:#6b7280;--blue:#2563eb;--red:#dc2626;--green:#16a34a;--orange:#ea580c;}
-    *{box-sizing:border-box}body{margin:0;font-family:Arial,'Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text)}header{background:#0f172a;color:white;padding:18px 24px}header h1{margin:0;font-size:20px}header p{margin:6px 0 0;color:#cbd5e1;font-size:13px}main{padding:20px;max-width:1500px;margin:0 auto}.grid{display:grid;grid-template-columns:430px 1fr;gap:16px;align-items:start}.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 2px rgba(15,23,42,.04);padding:16px;margin-bottom:16px}.card h2{margin:0 0 12px;font-size:16px}.row{display:grid;grid-template-columns:110px 1fr;gap:10px;align-items:center;margin:10px 0}label{color:#374151;font-size:13px}input,select,textarea{width:100%;border:1px solid #d1d5db;border-radius:8px;padding:9px 10px;font-size:14px;background:white}textarea{min-height:260px;font-family:Consolas,monospace;font-size:13px}button{border:0;border-radius:8px;padding:9px 12px;cursor:pointer;background:var(--blue);color:white;font-weight:600}button.secondary{background:#475569}button.light{background:#e5e7eb;color:#111827}button.green{background:var(--green)}button.orange{background:var(--orange)}button.red{background:var(--red)}button:disabled{opacity:.55;cursor:not-allowed}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.hint{font-size:12px;color:var(--muted);line-height:1.6}table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid var(--line);padding:9px;text-align:left;vertical-align:top}th{background:#f8fafc;color:#374151}tr:hover td{background:#fafafa}.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;background:#e5e7eb}.badge.ok{background:#dcfce7;color:#166534}.badge.bad{background:#fee2e2;color:#991b1b}.badge.run{background:#dbeafe;color:#1d4ed8}.tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}.tabs button{background:#e5e7eb;color:#111827}.tabs button.active{background:var(--blue);color:white}.tab{display:none}.tab.active{display:block}pre{background:#0b1020;color:#d1e7ff;padding:12px;border-radius:10px;overflow:auto;max-height:360px;font-size:12px}.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}.notice{border-left:4px solid var(--blue);padding:10px 12px;background:#eff6ff;border-radius:8px;font-size:13px;color:#1e3a8a;margin-bottom:12px}.warn{border-left-color:#ea580c;background:#fff7ed;color:#7c2d12}.mini{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}.metric{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:10px}.metric b{font-size:20px} @media(max-width:980px){.grid,.split{grid-template-columns:1fr}}
+    :root{--bg:#f6f7f9;--panel:#fff;--panel-soft:#f8faf9;--line:#d9dee5;--line-strong:#b9c2ce;--text:#18202a;--muted:#64707f;--blue:#2563eb;--teal:#0f766e;--amber:#b45309;--red:#b91c1c;--green:#15803d;--violet:#6d28d9;--shadow:0 1px 2px rgba(15,23,42,.06)}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,"Microsoft YaHei",sans-serif;letter-spacing:0}button,input,select,textarea{font:inherit}button{height:34px;border:1px solid var(--line-strong);border-radius:6px;background:#fff;color:var(--text);display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:0 11px;cursor:pointer;white-space:nowrap}button.primary{border-color:var(--blue);background:var(--blue);color:#fff}button.success{border-color:var(--green);background:var(--green);color:#fff}button.warn{border-color:var(--amber);background:var(--amber);color:#fff}button.danger{border-color:var(--red);background:var(--red);color:#fff}button.ghost{background:transparent}button.icon-only{width:34px;padding:0}button:disabled{opacity:.55;cursor:not-allowed}.icon{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}.shell{display:grid;grid-template-columns:248px minmax(0,1fr);min-height:100vh}.sidebar{background:#fff;border-right:1px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:14px}.brand{height:48px;display:flex;align-items:center;gap:10px;padding:0 8px}.brand-mark{width:30px;height:30px;border:1px solid #99b6ff;border-radius:7px;display:grid;place-items:center;color:var(--blue);background:#eff5ff;font-weight:700}.brand h1{margin:0;font-size:15px;line-height:1.2}.brand span{display:block;color:var(--muted);font-size:12px;margin-top:2px}.nav{display:grid;gap:6px}.nav button{justify-content:flex-start;width:100%;border-color:transparent;background:transparent;color:#334155}.nav button.active{color:var(--blue);background:#edf4ff;border-color:#c8dbff}.side-box{border:1px solid var(--line);border-radius:8px;padding:11px;background:var(--panel-soft)}.side-box h2{margin:0 0 10px;font-size:13px}.mini-status{display:grid;gap:8px}.mini-row{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted)}.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;background:var(--green)}.dot.warn{background:var(--amber)}.dot.bad{background:var(--red)}.content{display:grid;grid-template-rows:auto 1fr;min-width:0}.topbar{min-height:64px;background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 22px;position:sticky;top:0;z-index:4}.topbar-title h2{margin:0;font-size:18px}.topbar-title p{margin:4px 0 0;font-size:12px;color:var(--muted);word-break:break-all}.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}main{padding:18px 22px 28px;display:grid;gap:16px}.status-grid{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px}.stat{border:1px solid var(--line);border-radius:8px;background:var(--panel);box-shadow:var(--shadow);padding:13px;min-height:86px}.stat label{color:var(--muted);font-size:12px}.stat strong{display:block;margin-top:7px;font-size:24px}.stat small{display:block;margin-top:4px;color:var(--muted);font-size:12px}.stat.good strong{color:var(--green)}.stat.warn strong{color:var(--amber)}.stat.bad strong{color:var(--red)}.stat.blue strong{color:var(--blue)}.workspace{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(340px,.75fr);gap:16px;align-items:start}.panel{border:1px solid var(--line);border-radius:8px;background:var(--panel);box-shadow:var(--shadow);min-width:0}.panel-head{min-height:48px;padding:12px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px}.panel-head h3{margin:0;font-size:15px}.panel-head .sub{color:var(--muted);font-size:12px;margin-top:3px}.panel-body{padding:14px}.step-list{display:grid;gap:10px}.step{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:10px;border:1px solid var(--line);border-radius:8px;padding:10px;background:#fff}.step-index{width:30px;height:30px;border-radius:6px;display:grid;place-items:center;background:#eef6f5;color:var(--teal);font-weight:700}.step h4{margin:0;font-size:14px}.step p{margin:4px 0 0;color:var(--muted);font-size:12px}.segmented{display:inline-grid;grid-auto-flow:column;gap:2px;padding:3px;background:#eef1f5;border-radius:8px}.segmented button{height:30px;border:0;background:transparent;padding:0 10px}.segmented button.active{background:#fff;box-shadow:var(--shadow)}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:grid;gap:6px;min-width:0}.field.full{grid-column:1/-1}.field label{color:#364152;font-size:12px}input,select,textarea{width:100%;border:1px solid var(--line-strong);border-radius:6px;background:#fff;color:var(--text);padding:8px 9px;min-height:34px}textarea{min-height:122px;resize:vertical;font-family:Consolas,"Microsoft YaHei",monospace;line-height:1.45}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:8px}table{width:100%;border-collapse:collapse;min-width:760px}th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle;font-size:13px}th{background:#f8fafc;color:#475569;font-weight:700;white-space:nowrap}tr:last-child td{border-bottom:0}.badge{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;font-size:12px;border:1px solid transparent;white-space:nowrap}.badge.green{background:#e9f8ef;color:var(--green);border-color:#bde8cc}.badge.amber{background:#fff4df;color:var(--amber);border-color:#f5d19a}.badge.red{background:#fdecec;color:var(--red);border-color:#f4b6b6}.badge.blue{background:#edf4ff;color:var(--blue);border-color:#c8dbff}.badge.violet{background:#f4efff;color:var(--violet);border-color:#d8ccff}.run-box{display:grid;gap:12px}.run-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.log{background:#111827;color:#d7e6ff;border-radius:8px;padding:12px;min-height:180px;font-family:Consolas,monospace;font-size:12px;line-height:1.55;overflow:auto;white-space:pre-wrap}.report-list{display:grid;gap:10px}.report-item{border:1px solid var(--line);border-radius:8px;padding:11px;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;background:#fff}.report-item h4{margin:0;font-size:14px}.report-item p{margin:4px 0 0;color:var(--muted);font-size:12px}.toast{position:fixed;right:20px;bottom:20px;z-index:20;display:grid;gap:8px}.toast-item{background:#111827;color:#fff;border-radius:8px;padding:10px 12px;box-shadow:0 10px 30px rgba(0,0,0,.18);font-size:13px;max-width:360px}.hidden{display:none!important}@media(max-width:1180px){.shell{grid-template-columns:1fr}.sidebar{position:static;border-right:0;border-bottom:1px solid var(--line)}.nav{grid-template-columns:repeat(4,minmax(0,1fr))}.workspace{grid-template-columns:1fr}.status-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:720px){.topbar{align-items:flex-start;flex-direction:column}main{padding:12px}.status-grid,.form-grid,.run-controls{grid-template-columns:1fr}.step{grid-template-columns:34px 1fr}.step button{grid-column:1/-1}.report-item{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
-<header><h1>Vue升级一致性核对平台 v9</h1><p>三列 URL 批量导入、策略预览、覆盖率报告、性能多次中位数、人工确认登记。目标：省人力但不漏测。</p></header>
-<main><div class="grid"><section>
-  <div class="card"><h2>1. 环境检测</h2><div class="row"><label>浏览器路径</label><input id="browserPath" placeholder="自动检测 Chrome / Edge / Chromium"/></div><div class="actions"><button class="light" onclick="detectBrowser()">自动检测</button><button class="secondary" onclick="saveBrowserPath()">保存到 .env</button><button class="light" onclick="runAuth()">打开登录并保存态</button></div><p class="hint">如果 Playwright 自带浏览器版本不匹配，可指定 Edge 或 Chrome 路径。登录态默认保存到 workspace/auth/storageState.json。</p></div>
-  <div class="card"><h2>2. 页面列表</h2><select id="pageSelect" onchange="loadPageDetail();refreshPlan()"></select><div class="actions"><button class="light" onclick="refreshPages()">刷新</button><button class="light" onclick="newPageTemplate()">新建页面</button></div><div id="pageSummary" class="hint"></div></div>
-  <div class="card"><h2>3. 执行验收</h2><div class="row"><label>测试策略</label><select id="runMode" onchange="refreshPlan()"><option value="default">默认界面</option><option value="smoke">冒烟模式</option><option value="standard" selected>标准模式</option><option value="strict">严格模式</option><option value="single-filter">单筛选器全量</option></select></div><div class="row"><label>浏览器界面</label><select id="headed"><option value="true">打开，便于调试</option><option value="false">无头模式</option></select></div><div class="row"><label>页面并发</label><input id="concurrency" type="number" min="1" max="3" value="1"/></div><div class="row"><label>性能采样</label><input id="runs" type="number" min="1" max="9" value="1"/></div><div class="actions"><button onclick="runValidate()">配置校验</button><button class="secondary" onclick="runSelectorCheck()">选择器检查</button><button class="orange" onclick="refreshPlan()">策略预览</button><button class="green" onclick="runCompare()">开始对比</button></div><p class="hint">标准模式：默认 + 筛选策略抽样/遍历 + 页签全量；严格模式加大覆盖。性能严谨对比建议并发=1，采样次数=3。</p></div>
-</section><section>
-  <div class="tabs"><button class="active" onclick="showTab('import',this)">批量导入</button><button onclick="showTab('form',this)">业务表单</button><button onclick="showTab('yaml',this)">YAML</button><button onclick="showTab('plan',this)">策略预览</button><button onclick="showTab('jobs',this)">任务日志</button><button onclick="showTab('reports',this)">报告</button><button onclick="showTab('manual',this)">人工确认</button></div>
-  <div id="tab-import" class="tab active card"><h2>批量导入页面</h2><div class="notice">只需要三列：页面、VUE2链接、VUE3链接。系统会自动生成 pageKey 和标准模式配置，后续通过页面学习补充指标/筛选器/页签/交互。</div><div class="row"><label>格式</label><select id="importFormat"><option value="markdown">Markdown表格</option><option value="csv">CSV</option><option value="xlsx">Excel文件</option></select></div><div class="row"><label>默认策略</label><select id="importStrategy"><option value="standard">标准模式</option><option value="smoke">冒烟模式</option><option value="strict">严格模式</option></select></div><textarea id="importText">| 页面 | VUE2链接 | VUE3链接 |
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">V</div><div><h1>Vue 回归对比</h1><span>本地验收工作台</span></div></div>
+      <nav class="nav" aria-label="主导航">
+        <button class="active" data-target="overview"><svg class="icon" viewBox="0 0 24 24"><path d="M4 13h6V4H4v9Z"/><path d="M14 20h6V4h-6v16Z"/><path d="M4 20h6v-3H4v3Z"/></svg>总览</button>
+        <button data-target="pages"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h10"/></svg>页面配置</button>
+        <button data-target="run"><svg class="icon" viewBox="0 0 24 24"><path d="m8 5 8 7-8 7V5Z"/></svg>执行中心</button>
+        <button data-target="reports"><svg class="icon" viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6V3Z"/><path d="M9 13h6"/><path d="M9 17h4"/></svg>报告中心</button>
+      </nav>
+      <div class="side-box">
+        <h2>环境状态</h2>
+        <div class="mini-status">
+          <div class="mini-row"><span><i id="nodeDot" class="dot"></i>Node.js</span><b id="nodeStatus">检测中</b></div>
+          <div class="mini-row"><span><i id="depsDot" class="dot warn"></i>依赖</span><b id="depsStatus">检测中</b></div>
+          <div class="mini-row"><span><i id="browserDot" class="dot warn"></i>浏览器</span><b id="browserStatus">检测中</b></div>
+          <div class="mini-row"><span><i id="authDot" class="dot warn"></i>登录态</span><b id="authStatus">检测中</b></div>
+        </div>
+      </div>
+      <div class="side-box">
+        <h2>当前工作区</h2>
+        <div class="mini-status">
+          <div class="mini-row"><span>页面配置</span><b id="sidePages">0</b></div>
+          <div class="mini-row"><span>报告数量</span><b id="sideReports">0</b></div>
+          <div class="mini-row"><span>UI 服务</span><b id="sidePort">3666</b></div>
+        </div>
+      </div>
+    </aside>
+
+    <section class="content">
+      <header class="topbar">
+        <div class="topbar-title"><h2>验收工作台</h2><p id="workspaceRoot">加载工作区...</p></div>
+        <div class="actions">
+          <button class="ghost" id="refreshAllBtn"><svg class="icon" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>刷新</button>
+          <button class="primary" id="topRunBtn"><svg class="icon" viewBox="0 0 24 24"><path d="m8 5 8 7-8 7V5Z"/></svg>开始对比</button>
+        </div>
+      </header>
+
+      <main>
+        <section id="overview" class="status-grid">
+          <div class="stat blue"><label>页面配置</label><strong id="statPages">0</strong><small id="statPagesSub">正在读取</small></div>
+          <div class="stat good"><label>环境检查</label><strong id="statEnv">0/4</strong><small id="statEnvSub">正在检测</small></div>
+          <div class="stat warn"><label>配置缺口</label><strong id="statGaps">0</strong><small id="statGapsSub">等待页面数据</small></div>
+          <div class="stat bad"><label>最新任务</label><strong id="statJob">-</strong><small id="statJobSub">暂无任务</small></div>
+        </section>
+
+        <section class="workspace">
+          <div class="panel">
+            <div class="panel-head"><div><h3>一键初始化</h3><div class="sub">首次使用或换电脑时从这里开始</div></div><div class="segmented"><button class="active">Windows</button><button>本地 Web</button></div></div>
+            <div class="panel-body">
+              <div class="step-list">
+                <div class="step"><div class="step-index">1</div><div><h4>安装项目依赖</h4><p>执行 corepack pnpm install，日志会显示在任务日志里。</p></div><button id="installDepsBtn"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>安装</button></div>
+                <div class="step"><div class="step-index">2</div><div><h4>安装浏览器运行时</h4><p>安装 Playwright Chromium；也可以绑定本机 Edge / Chrome。</p></div><button id="installBrowsersBtn"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8"/><path d="M12 3a13 13 0 0 1 0 18"/></svg>安装浏览器</button></div>
+                <div class="step"><div class="step-index">3</div><div><h4>绑定本机浏览器</h4><p id="browserPathText">检测或保存本机 Edge / Chrome 路径。</p></div><div class="actions"><button id="detectBrowserBtn">检测</button><button id="saveBrowserPathBtn">保存路径</button></div></div>
+                <div class="step"><div class="step-index">4</div><div><h4>保存登录态</h4><p>打开目标系统，登录后保存到 workspace/auth/storageState.json。</p></div><button id="authBtn"><svg class="icon" viewBox="0 0 24 24"><path d="M15 3h4v18h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>打开登录</button></div>
+              </div>
+            </div>
+          </div>
+          <aside id="run" class="panel">
+            <div class="panel-head"><div><h3>运行控制</h3><div class="sub">选择页面和策略后直接执行</div></div></div>
+            <div class="panel-body run-box">
+              <div class="field"><label>页面</label><select id="runPageSelect"></select></div>
+              <div class="run-controls">
+                <div class="field"><label>策略</label><select id="runMode"><option value="standard">标准模式</option><option value="smoke">冒烟模式</option><option value="strict">严格模式</option><option value="single-filter">单筛选器全量</option><option value="default">默认界面</option></select></div>
+                <div class="field"><label>并发</label><input id="concurrency" type="number" min="1" max="5" value="1" /></div>
+                <div class="field"><label>采样</label><input id="runs" type="number" min="1" max="9" value="1" /></div>
+              </div>
+              <div class="field"><label>浏览器界面</label><select id="headed"><option value="true">打开，便于调试</option><option value="false">无头模式</option></select></div>
+              <div class="actions"><button id="validateBtn">校验</button><button id="selectorBtn">检查选择器</button><button class="success" id="compareBtn">运行</button></div>
+            </div>
+          </aside>
+        </section>
+
+        <section id="pages" class="workspace">
+          <div class="panel">
+            <div class="panel-head"><div><h3>页面配置</h3><div class="sub">批量导入后补充指标、筛选器、页签和交互</div></div><div class="actions"><button id="newPageBtn">新增页面</button><button id="saveFormBtn">保存表单</button><button class="primary" id="saveYamlBtn">保存 YAML</button></div></div>
+            <div class="panel-body">
+              <div class="form-grid">
+                <div class="field"><label>选择页面</label><select id="pageSelect"></select></div>
+                <div class="field"><label>默认策略</label><select id="testStrategy"><option value="standard">标准模式</option><option value="smoke">冒烟模式</option><option value="strict">严格模式</option><option value="custom">自定义</option></select></div>
+                <div class="field"><label>页面名称</label><input id="pageName" placeholder="服务满意度" /></div>
+                <div class="field"><label>页面 Key</label><input id="pageKey" placeholder="service-satisfaction" /></div>
+                <div class="field full"><label>Vue2 URL</label><input id="vue2Url" placeholder="http://vue2.xxx/page" /></div>
+                <div class="field full"><label>Vue3 URL</label><input id="vue3Url" placeholder="http://vue3.xxx/page" /></div>
+                <div class="field"><label>等待区域</label><input id="waitForSelector" value="body" /></div>
+                <div class="field"><label>登录态</label><input id="storageState" value="workspace/auth/storageState.json" /></div>
+                <div class="field full"><label>YAML 高级配置</label><textarea id="yamlEditor" spellcheck="false"></textarea></div>
+              </div>
+            </div>
+          </div>
+          <aside class="panel">
+            <div class="panel-head"><div><h3>批量导入与完成度</h3><div class="sub">三列表导入后可在 YAML 中补充详细配置</div></div></div>
+            <div class="panel-body run-box">
+              <div class="run-controls"><div class="field"><label>格式</label><select id="importFormat"><option value="markdown">Markdown</option><option value="csv">CSV</option><option value="xlsx">Excel</option></select></div><div class="field"><label>策略</label><select id="importStrategy"><option value="standard">标准</option><option value="smoke">冒烟</option><option value="strict">严格</option></select></div><div class="field"><label>Excel</label><input id="xlsxFile" type="file" accept=".xlsx" /></div></div>
+              <textarea id="importText" spellcheck="false">| 页面 | VUE2链接 | VUE3链接 |
 |---|---|---|
-| 服务满意度 | http://vue2.xxx/service-satisfaction | http://vue3.xxx/service-satisfaction |
-| 客户分析 | http://vue2.xxx/customer-analysis | http://vue3.xxx/customer-analysis |</textarea><div class="row"><label>Excel文件</label><input id="xlsxFile" type="file" accept=".xlsx"/></div><div class="actions"><button onclick="importPages()">导入页面清单</button></div><pre id="importResult">等待导入</pre></div>
-  <div id="tab-form" class="tab card"><h2>页面基础信息</h2><div class="notice">基础信息用于一键跑通；指标、筛选器、页签、交互建议通过页面学习或 YAML 补充。</div><div class="row"><label>页面Key</label><input id="pageKey" placeholder="service-satisfaction"/></div><div class="row"><label>页面名称</label><input id="pageName" placeholder="服务满意度"/></div><div class="row"><label>Vue2 URL</label><input id="vue2Url" placeholder="http://vue2.xxx/page"/></div><div class="row"><label>Vue3 URL</label><input id="vue3Url" placeholder="http://vue3.xxx/page"/></div><div class="row"><label>默认策略</label><select id="testStrategy"><option value="standard">标准模式</option><option value="smoke">冒烟模式</option><option value="strict">严格模式</option><option value="custom">自定义</option></select></div><div class="row"><label>等待区域</label><input id="waitForSelector" value="body"/></div><div class="row"><label>登录态</label><input id="storageState" value="workspace/auth/storageState.json"/></div><div class="actions"><button onclick="saveFormPage()">保存页面配置</button></div></div>
-  <div id="tab-yaml" class="tab card"><h2>YAML 高级配置</h2><div class="notice warn">建议由前端维护 selector。非前端人员优先使用批量导入和策略预览，不直接修改复杂 YAML。</div><textarea id="yamlEditor"></textarea><div class="actions"><button onclick="saveYamlPage()">保存 YAML</button><button class="light" onclick="loadPageDetail()">重新加载</button></div></div>
-  <div id="tab-plan" class="tab card"><h2>策略预览与学习完成度</h2><div class="notice">执行前先看这里：预计跑多少场景、多少指标、哪些筛选策略、是否有覆盖缺口。</div><div id="planCards" class="mini"></div><table><thead><tr><th>页面</th><th>策略</th><th>预计场景</th><th>指标</th><th>交互</th><th>性能</th><th>筛选策略</th><th>页签</th><th>警告</th></tr></thead><tbody id="planBody"></tbody></table></div>
-  <div id="tab-jobs" class="tab card"><h2>任务日志</h2><div class="actions"><button class="light" onclick="refreshJobs()">刷新任务</button></div><table><thead><tr><th>任务</th><th>状态</th><th>命令</th><th>时间</th></tr></thead><tbody id="jobsBody"></tbody></table><h3>日志</h3><pre id="jobLog">暂无任务</pre></div>
-  <div id="tab-reports" class="tab card"><h2>报告</h2><div class="actions"><button class="light" onclick="refreshReports()">刷新报告</button><button onclick="runCompare()">按当前页面/策略重跑</button></div><table><thead><tr><th>目录</th><th>HTML</th><th>Excel</th><th>JSON</th><th>覆盖</th><th>计划</th></tr></thead><tbody id="reportsBody"></tbody></table></div>
-  <div id="tab-manual" class="tab card"><h2>人工确认登记</h2><div class="notice">用于登记“Vue3 多出”“高风险动作跳过”“无法判断”等人工确认结论，方便后续追踪。不会自动修改历史报告。</div><div class="row"><label>页面</label><input id="manualPage" placeholder="页面名称或 pageKey"/></div><div class="row"><label>确认项</label><input id="manualItem" placeholder="例如：Vue3 多出导出按钮"/></div><div class="row"><label>结论</label><select id="manualStatus"><option>确认合理</option><option>确认问题</option><option>暂不处理</option><option>需要补充配置</option></select></div><div class="row"><label>说明</label><input id="manualReason" placeholder="填写确认原因、需求编号或处理人"/></div><div class="actions"><button onclick="saveManualConfirmation()">保存人工确认</button><button class="light" onclick="refreshManualConfirmations()">刷新</button></div><table><thead><tr><th>时间</th><th>页面</th><th>确认项</th><th>结论</th><th>说明</th></tr></thead><tbody id="manualBody"></tbody></table></div>
-</section></div></main>
-<script>
-const $=id=>document.getElementById(id);let currentJobId='';let jobTimer=0;async function api(url,opts={}){const res=await fetch(url,{headers:{'Content-Type':'application/json'},...opts});const data=await res.json().catch(()=>({}));if(!res.ok||data.ok===false)throw new Error(data.message||res.statusText);return data}function showTab(name,btn){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));$('tab-'+name).classList.add('active');btn.classList.add('active');if(name==='jobs')refreshJobs();if(name==='reports')refreshReports();if(name==='manual')refreshManualConfirmations();if(name==='plan')refreshPlan()}
-async function detectBrowser(){try{const data=await api('/api/browser');$('browserPath').value=data.browserPath||'';toast(data.browserPath?'已检测到浏览器':'未检测到浏览器，请手动填写')}catch(e){toast(e.message)}}async function saveBrowserPath(){try{await api('/api/env/browser',{method:'POST',body:JSON.stringify({browserPath:$('browserPath').value})});toast('已保存浏览器路径')}catch(e){toast(e.message)}}
-async function refreshPages(){const data=await api('/api/pages');const s=$('pageSelect');s.innerHTML=data.pages.map(p=>`<option value="${esc(p.pageKey)}">${esc(p.pageName)} (${esc(p.pageKey)})</option>`).join('');$('pageSummary').innerHTML=data.pages.length?`共 ${data.pages.length} 个页面配置`:'暂无页面配置，请导入或新建页面。';if(data.pages.length){await loadPageDetail();await refreshPlan()}}
-async function loadPageDetail(){const key=$('pageSelect').value;if(!key)return;const data=await api('/api/pages/'+encodeURIComponent(key));const p=data.page;$('pageKey').value=p.pageKey||'';$('pageName').value=p.pageName||'';$('vue2Url').value=p.vue2Url||'';$('vue3Url').value=p.vue3Url||'';$('testStrategy').value=p.testStrategy||'standard';$('waitForSelector').value=p.waitForSelector||'body';$('storageState').value=p.storageState||'workspace/auth/storageState.json';$('yamlEditor').value=data.yaml||''}
-function newPageTemplate(){$('pageKey').value='';$('pageName').value='';$('vue2Url').value='';$('vue3Url').value='';$('testStrategy').value='standard';$('waitForSelector').value='body';$('storageState').value='workspace/auth/storageState.json';$('yamlEditor').value=''}
-async function saveFormPage(){const page={pageKey:$('pageKey').value,pageName:$('pageName').value,vue2Url:$('vue2Url').value,vue3Url:$('vue3Url').value,testStrategy:$('testStrategy').value,waitForSelector:$('waitForSelector').value,storageState:$('storageState').value,waitForNetworkIdle:true,autoDiscoverInteractions:true};try{const data=await api('/api/pages',{method:'POST',body:JSON.stringify({mode:'form',page})});toast(data.message);await refreshPages();$('pageSelect').value=data.pageKey;await loadPageDetail()}catch(e){toast(e.message)}}async function saveYamlPage(){try{const data=await api('/api/pages',{method:'POST',body:JSON.stringify({mode:'yaml',yaml:$('yamlEditor').value})});toast(data.message);await refreshPages();$('pageSelect').value=data.pageKey}catch(e){toast(e.message)}}
-async function importPages(){try{const format=$('importFormat').value;let payload={format,content:$('importText').value,strategy:$('importStrategy').value};if(format==='xlsx'){const f=$('xlsxFile').files[0];if(!f)throw new Error('请选择 Excel 文件');payload.xlsxBase64=await fileToBase64(f);payload.content=''}const data=await api('/api/import/pages',{method:'POST',body:JSON.stringify(payload)});$('importResult').textContent=JSON.stringify(data,null,2);await refreshPages()}catch(e){$('importResult').textContent=e.message}}
-function fileToBase64(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result).split(',')[1]);r.onerror=reject;r.readAsDataURL(file)})}
-function selectedPage(){return $('pageSelect').value||$('pageKey').value||''}async function refreshPlan(){try{const data=await api('/api/plan?page='+encodeURIComponent(selectedPage())+'&mode='+encodeURIComponent($('runMode').value));const plans=data.plans||[];$('planBody').innerHTML=plans.map(p=>`<tr><td>${esc(p.pageName)}</td><td>${esc(p.strategy)}</td><td>${p.scenarioCount}</td><td>${p.metricChecks}</td><td>${p.interactionChecks}</td><td>${p.performanceChecks}</td><td>${esc((p.filterScenarios||[]).map(f=>`${f.filterName}:${f.strategy}(${f.options.length})`).join('；')||'-')}</td><td>${esc((p.tabScenarios||[]).join('，')||'-')}</td><td>${esc((p.warnings||[]).join('；')||'-')}</td></tr>`).join('');const s={pages:plans.length,scenes:plans.reduce((a,p)=>a+p.scenarioCount,0),metrics:plans.reduce((a,p)=>a+p.metricChecks,0),interactions:plans.reduce((a,p)=>a+p.interactionChecks,0)};$('planCards').innerHTML=`<div class="metric"><div>页面</div><b>${s.pages}</b></div><div class="metric"><div>预计场景</div><b>${s.scenes}</b></div><div class="metric"><div>指标检查</div><b>${s.metrics}</b></div><div class="metric"><div>交互检查</div><b>${s.interactions}</b></div>`}catch(e){$('planBody').innerHTML=`<tr><td colspan="9">${esc(e.message)}</td></tr>`}}
-async function runValidate(){await startJob('/api/run/validate',{page:selectedPage()})}async function runSelectorCheck(){await startJob('/api/run/check-selectors',{page:selectedPage(),headed:$('headed').value==='true'})}async function runCompare(){await startJob('/api/run/compare',{page:selectedPage(),mode:$('runMode').value,headed:$('headed').value==='true',concurrency:Number($('concurrency').value||1),runs:Number($('runs').value||1)})}async function runAuth(){await startJob('/api/run/auth',{})}
-async function startJob(url,payload){try{const data=await api(url,{method:'POST',body:JSON.stringify(payload)});currentJobId=data.job.id;toast('任务已启动：'+data.job.title);document.querySelectorAll('.tabs button')[4].click();pollJob();clearInterval(jobTimer);jobTimer=setInterval(pollJob,1500)}catch(e){toast(e.message)}}async function pollJob(){if(!currentJobId)return refreshJobs();try{const data=await api('/api/jobs/'+currentJobId);renderJobLog(data.job);await refreshJobs(false);if(data.job.status!=='running'){clearInterval(jobTimer);await refreshReports()}}catch(e){clearInterval(jobTimer)}}async function refreshJobs(updateLog=true){const data=await api('/api/jobs');$('jobsBody').innerHTML=data.jobs.map(j=>`<tr onclick="selectJob('${j.id}')"><td>${esc(j.title)}</td><td>${statusBadge(j.status)}</td><td><code>${esc(j.command)}</code></td><td>${esc(j.startedAt)}</td></tr>`).join('');if(updateLog&&data.jobs[0]){currentJobId=data.jobs[0].id;renderJobLog(data.jobs[0])}}async function selectJob(id){currentJobId=id;const data=await api('/api/jobs/'+id);renderJobLog(data.job)}function renderJobLog(job){$('jobLog').textContent=`[${job.status}] ${job.command}\n\n`+(job.logs||[]).join('\n')}
-async function refreshReports(){const data=await api('/api/reports');$('reportsBody').innerHTML=data.reports.map(r=>`<tr><td>${esc(r.dir)}</td><td>${r.html?`<a target="_blank" href="/${r.html}">打开</a>`:'-'}</td><td>${r.xlsx?`<a href="/${r.xlsx}">下载</a>`:'-'}</td><td>${r.json?`<a target="_blank" href="/${r.json}">打开</a>`:'-'}</td><td>${r.coverage?`<a target="_blank" href="/${r.coverage}">打开</a>`:'-'}</td><td>${r.plan?`<a target="_blank" href="/${r.plan}">打开</a>`:'-'}</td></tr>`).join('')}
-async function refreshManualConfirmations(){const data=await api('/api/manual-confirmations');$('manualBody').innerHTML=(data.items||[]).map(x=>`<tr><td>${esc(x.createdAt)}</td><td>${esc(x.page)}</td><td>${esc(x.item)}</td><td>${esc(x.status)}</td><td>${esc(x.reason)}</td></tr>`).join('')}
-async function saveManualConfirmation(){try{await api('/api/manual-confirmations',{method:'POST',body:JSON.stringify({page:$('manualPage').value,item:$('manualItem').value,status:$('manualStatus').value,reason:$('manualReason').value})});toast('已保存人工确认');await refreshManualConfirmations()}catch(e){toast(e.message)}}
-function statusBadge(s){return `<span class="badge ${s==='success'?'ok':s==='error'?'bad':'run'}">${s}</span>`}function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function toast(msg){alert(msg)}detectBrowser();refreshPages();refreshReports();refreshManualConfirmations();
-</script></body></html>
+| 服务满意度 | http://vue2.xxx/service-satisfaction | http://vue3.xxx/service-satisfaction |</textarea>
+              <div class="actions"><button class="primary" id="importBtn">导入页面清单</button><button id="refreshPagesBtn">刷新页面</button></div>
+              <div class="table-wrap"><table><thead><tr><th>类型</th><th>数量</th><th>状态</th></tr></thead><tbody id="coverageBody"><tr><td colspan="3">请选择页面</td></tr></tbody></table></div>
+            </div>
+          </aside>
+        </section>
+
+        <section class="workspace">
+          <div class="panel">
+            <div class="panel-head"><div><h3>任务日志</h3><div class="sub">运行中可终止，失败原因保留在这里</div></div><div class="actions"><button id="refreshJobsBtn">刷新任务</button><button class="warn" id="stopJobBtn">终止任务</button></div></div>
+            <div class="panel-body"><div class="table-wrap"><table><thead><tr><th>任务</th><th>状态</th><th>命令</th><th>时间</th></tr></thead><tbody id="jobsBody"><tr><td colspan="4">暂无任务</td></tr></tbody></table></div><div id="jobLog" class="log">暂无任务</div></div>
+          </div>
+          <aside id="reports" class="panel">
+            <div class="panel-head"><div><h3>报告中心</h3><div class="sub">最终报告包含页面覆盖概览与明细</div></div><button id="refreshReportsBtn">刷新</button></div>
+            <div class="panel-body report-list" id="reportsBody"><div class="report-item"><div><h4>暂无报告</h4><p>运行对比后会出现在这里</p></div></div></div>
+          </aside>
+        </section>
+
+        <section class="workspace">
+          <div class="panel">
+            <div class="panel-head"><div><h3>人工确认</h3><div class="sub">登记 Vue3 多出、无法判断或业务确认项</div></div><button class="primary" id="saveManualBtn">保存确认</button></div>
+            <div class="panel-body">
+              <div class="form-grid">
+                <div class="field"><label>页面</label><input id="manualPage" placeholder="页面名称或 pageKey" /></div>
+                <div class="field"><label>结论</label><select id="manualStatus"><option>确认合理</option><option>确认问题</option><option>暂不处理</option><option>需要补充配置</option></select></div>
+                <div class="field full"><label>确认项</label><input id="manualItem" placeholder="例如：Vue3 多出导出按钮" /></div>
+                <div class="field full"><label>说明</label><input id="manualReason" placeholder="填写确认原因、需求编号或处理人" /></div>
+              </div>
+            </div>
+          </div>
+          <aside class="panel">
+            <div class="panel-head"><div><h3>确认记录</h3><div class="sub">仅用于本地追踪，不会修改历史报告</div></div><button id="refreshManualBtn">刷新</button></div>
+            <div class="panel-body"><div class="table-wrap"><table><thead><tr><th>时间</th><th>页面</th><th>确认项</th><th>结论</th></tr></thead><tbody id="manualBody"><tr><td colspan="4">暂无记录</td></tr></tbody></table></div></div>
+          </aside>
+        </section>
+      </main>
+    </section>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script>
+    const $ = id => document.getElementById(id);
+    const state = { pages: [], page: null, env: null, reports: [], jobs: [], currentJobId: '', jobTimer: 0 };
+
+    async function api(url, opts={}) {
+      const res = await fetch(url, { headers: { 'Content-Type': 'application/json' }, ...opts });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || data.ok === false) throw new Error(data.message || res.statusText);
+      return data;
+    }
+    function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+    function toast(message){const box=$('toast');const item=document.createElement('div');item.className='toast-item';item.textContent=message;box.appendChild(item);setTimeout(()=>item.remove(),4200);}
+    function badge(text, kind){return `<span class="badge ${kind}">${esc(text)}</span>`;}
+    function setDot(id, ok, warn=false){const el=$(id);el.className='dot '+(ok?'':warn?'warn':'bad');}
+    function selectedPage(){return $('runPageSelect').value || $('pageSelect').value || $('pageKey').value || '';}
+
+    async function refreshAll(){await Promise.allSettled([refreshEnv(), refreshPages(), refreshReports(), refreshJobs(true), refreshManual()]);}
+    async function refreshEnv(){
+      const data = await api('/api/env/status');
+      state.env = data;
+      $('workspaceRoot').textContent = data.root || '';
+      $('sidePort').textContent = String(data.port || 3666);
+      $('sidePages').textContent = String(data.pagesCount || 0);
+      $('sideReports').textContent = String(data.reportsCount || 0);
+      $('nodeStatus').textContent = data.nodeVersion || '未知';
+      $('depsStatus').textContent = data.dependenciesInstalled ? '已安装' : '未安装';
+      $('browserStatus').textContent = data.browserReady ? '已就绪' : '未配置';
+      $('authStatus').textContent = data.authExists ? '已保存' : '未保存';
+      setDot('nodeDot', true); setDot('depsDot', data.dependenciesInstalled); setDot('browserDot', data.browserReady, true); setDot('authDot', data.authExists, true);
+      const okCount = [true, data.dependenciesInstalled, data.browserReady, data.authExists].filter(Boolean).length;
+      $('statEnv').textContent = `${okCount}/4`;
+      $('statEnvSub').textContent = data.browserPath ? `浏览器：${data.browserPath}` : '未检测到浏览器路径';
+      $('browserPathText').textContent = data.browserPath ? `当前路径：${data.browserPath}` : '未检测到浏览器路径，可自动检测或手动保存。';
+      $('statPages').textContent = String(data.pagesCount || 0);
+      $('statPagesSub').textContent = data.pagesCount ? '页面配置已加载' : '请导入或新建页面';
+    }
+
+    async function refreshPages(){
+      const data = await api('/api/pages');
+      state.pages = data.pages || [];
+      const opts = state.pages.map(p => `<option value="${esc(p.pageKey)}">${esc(p.pageName)} (${esc(p.pageKey)})</option>`).join('');
+      $('pageSelect').innerHTML = opts || '<option value="">暂无页面</option>';
+      $('runPageSelect').innerHTML = opts || '<option value="">暂无页面</option>';
+      $('statPages').textContent = String(state.pages.length);
+      $('sidePages').textContent = String(state.pages.length);
+      updateGapStat();
+      if (state.pages.length) await loadPage(state.pages[0].pageKey);
+    }
+
+    async function loadPage(key){
+      if (!key) return;
+      const data = await api('/api/pages/' + encodeURIComponent(key));
+      state.page = data.page;
+      $('pageSelect').value = data.page.pageKey;
+      $('runPageSelect').value = data.page.pageKey;
+      $('pageKey').value = data.page.pageKey || '';
+      $('pageName').value = data.page.pageName || '';
+      $('vue2Url').value = data.page.vue2Url || '';
+      $('vue3Url').value = data.page.vue3Url || '';
+      $('testStrategy').value = data.page.testStrategy || 'standard';
+      $('waitForSelector').value = data.page.waitForSelector || 'body';
+      $('storageState').value = data.page.storageState || 'workspace/auth/storageState.json';
+      $('yamlEditor').value = data.yaml || '';
+      renderCoverage(data.page);
+      await refreshPlan();
+    }
+
+    function renderCoverage(page){
+      const tabs = Array.isArray(page.tabs) ? page.tabs : (page.tabs?.items || []);
+      const rows = [
+        ['指标', page.metrics?.length || 0, page.metrics?.length ? badge('已配置','green') : badge('缺口','amber')],
+        ['筛选器', page.filters?.length || 0, page.filters?.length ? badge('已配置','green') : badge('可选','blue')],
+        ['页签', tabs.length || 0, tabs.length ? badge('已配置','green') : badge('可选','blue')],
+        ['交互', page.interactions?.length || 0, page.interactions?.length ? badge('已配置','green') : badge('保守扫描','violet')],
+        ['自动扫描', page.autoDiscoverInteractions === false ? 0 : 1, page.autoDiscoverInteractions === false ? badge('关闭','amber') : badge('开启','green')]
+      ];
+      $('coverageBody').innerHTML = rows.map(r => `<tr><td>${esc(r[0])}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('');
+    }
+
+    function updateGapStat(){
+      const gaps = state.pages.filter(p => (p.metricsCount || 0) === 0).length;
+      $('statGaps').textContent = String(gaps);
+      $('statGapsSub').textContent = gaps ? `${gaps} 个页面缺少指标` : '关键指标均已配置';
+    }
+
+    async function refreshPlan(){
+      if (!selectedPage()) return;
+      const data = await api('/api/plan?page=' + encodeURIComponent(selectedPage()) + '&mode=' + encodeURIComponent($('runMode').value));
+      const plan = data.plans?.[0];
+      if (plan) {
+        $('statPagesSub').textContent = `预计 ${plan.scenarioCount} 个场景，${plan.metricChecks} 个指标检查`;
+      }
+    }
+
+    function newPage(){
+      state.page = null;
+      $('pageKey').value = '';
+      $('pageName').value = '';
+      $('vue2Url').value = '';
+      $('vue3Url').value = '';
+      $('testStrategy').value = 'standard';
+      $('waitForSelector').value = 'body';
+      $('storageState').value = 'workspace/auth/storageState.json';
+      $('yamlEditor').value = '';
+      $('coverageBody').innerHTML = '<tr><td colspan="3">新页面尚未保存</td></tr>';
+    }
+
+    async function saveFormPage(){
+      const payload = { mode: 'form', page: { pageKey: $('pageKey').value, pageName: $('pageName').value, vue2Url: $('vue2Url').value, vue3Url: $('vue3Url').value, testStrategy: $('testStrategy').value, waitForSelector: $('waitForSelector').value, storageState: $('storageState').value, waitForNetworkIdle: true, autoDiscoverInteractions: true } };
+      const data = await api('/api/pages', { method: 'POST', body: JSON.stringify(payload) });
+      toast(data.message || '已保存页面配置');
+      await refreshPages();
+      await loadPage(data.pageKey);
+    }
+
+    async function saveYamlPage(){
+      const yaml = $('yamlEditor').value.trim();
+      if (!yaml) throw new Error('YAML 不能为空');
+      const data = await api('/api/pages', { method: 'POST', body: JSON.stringify({ mode: 'yaml', yaml }) });
+      toast(data.message || '已保存 YAML 配置');
+      await refreshPages();
+      await loadPage(data.pageKey);
+    }
+
+    async function importPages(){
+      const format = $('importFormat').value;
+      const payload = { format, content: $('importText').value, strategy: $('importStrategy').value };
+      if (format === 'xlsx') {
+        const file = $('xlsxFile').files[0];
+        if (!file) throw new Error('请选择 Excel 文件');
+        payload.xlsxBase64 = await fileToBase64(file);
+        payload.content = '';
+      }
+      const data = await api('/api/import/pages', { method: 'POST', body: JSON.stringify(payload) });
+      toast(`导入完成：${data.imported} 个，跳过 ${data.skipped} 个`);
+      await refreshPages();
+    }
+    function fileToBase64(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result).split(',')[1]);r.onerror=reject;r.readAsDataURL(file);});}
+
+    async function detectBrowser(){const data=await api('/api/browser');toast(data.browserPath ? '已检测到浏览器' : '未检测到浏览器');if(data.browserPath){await refreshEnv();}}
+    async function saveBrowserPath(){const path = prompt('请输入 chrome.exe 或 msedge.exe 路径', state.env?.browserPath || '');if(!path)return;await api('/api/env/browser',{method:'POST',body:JSON.stringify({browserPath:path})});toast('已保存浏览器路径');await refreshEnv();}
+    async function startJob(url, payload={}){const data=await api(url,{method:'POST',body:JSON.stringify(payload)});state.currentJobId=data.job.id;toast('任务已启动：'+data.job.title);await refreshJobs(true);clearInterval(state.jobTimer);state.jobTimer=setInterval(pollJob,1500);}
+    async function pollJob(){if(!state.currentJobId)return;const data=await api('/api/jobs/'+state.currentJobId);renderJobLog(data.job);await refreshJobs(false);if(data.job.status!=='running'){clearInterval(state.jobTimer);await Promise.allSettled([refreshReports(), refreshEnv()]);}}
+    async function refreshJobs(updateLog=true){const data=await api('/api/jobs');state.jobs=data.jobs||[];$('jobsBody').innerHTML=state.jobs.length?state.jobs.map(j=>`<tr data-job="${esc(j.id)}"><td>${esc(j.title)}</td><td>${jobBadge(j.status)}</td><td><code>${esc(j.command)}</code></td><td>${esc(new Date(j.startedAt).toLocaleString())}</td></tr>`).join(''):'<tr><td colspan="4">暂无任务</td></tr>';if(state.jobs[0]){$('statJob').textContent=state.jobs[0].status;$('statJobSub').textContent=state.jobs[0].title;if(updateLog){state.currentJobId=state.jobs[0].id;renderJobLog(state.jobs[0]);}}}
+    function renderJobLog(job){$('jobLog').textContent=`[${job.status}] ${job.command}\n\n${(job.logs||[]).join('\n')}`;}
+    function jobBadge(status){return badge(status, status==='success'?'green':status==='running'?'blue':status==='stopped'?'amber':'red');}
+    async function stopJob(){if(!state.currentJobId)return toast('没有可终止的任务');const data=await api('/api/jobs/'+state.currentJobId+'/stop',{method:'POST'});toast(data.message||'已发送终止信号');await refreshJobs(true);}
+
+    async function refreshReports(){const data=await api('/api/reports');state.reports=data.reports||[];$('sideReports').textContent=String(state.reports.length);$('reportsBody').innerHTML=state.reports.length?state.reports.map(r=>`<div class="report-item"><div><h4>${esc(r.dir.split('/').pop())}</h4><p>${esc(r.dir)}</p></div><div class="actions">${r.html?`<a href="/${esc(r.html)}" target="_blank"><button class="icon-only" title="打开 HTML">H</button></a>`:''}${r.xlsx?`<a href="/${esc(r.xlsx)}"><button class="icon-only" title="下载 Excel">X</button></a>`:''}${r.json?`<a href="/${esc(r.json)}" target="_blank"><button class="icon-only" title="打开 JSON">J</button></a>`:''}</div></div>`).join(''):'<div class="report-item"><div><h4>暂无报告</h4><p>运行对比后会出现在这里</p></div></div>';}
+    async function refreshManual(){const data=await api('/api/manual-confirmations');const items=data.items||[];$('manualBody').innerHTML=items.length?items.map(x=>`<tr><td>${esc(new Date(x.createdAt).toLocaleString())}</td><td>${esc(x.page)}</td><td>${esc(x.item)}</td><td>${esc(x.status)}</td></tr>`).join(''):'<tr><td colspan="4">暂无记录</td></tr>';}
+    async function saveManual(){await api('/api/manual-confirmations',{method:'POST',body:JSON.stringify({page:$('manualPage').value,item:$('manualItem').value,status:$('manualStatus').value,reason:$('manualReason').value})});toast('已保存人工确认');await refreshManual();}
+
+    document.querySelectorAll('.nav button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');$(btn.dataset.target).scrollIntoView({behavior:'smooth',block:'start'});}));
+    $('refreshAllBtn').onclick=refreshAll;$('topRunBtn').onclick=()=>startJob('/api/run/compare',{page:selectedPage(),mode:$('runMode').value,headed:$('headed').value==='true',concurrency:Number($('concurrency').value||1),runs:Number($('runs').value||1)});
+    $('installDepsBtn').onclick=()=>startJob('/api/run/install-deps');$('installBrowsersBtn').onclick=()=>startJob('/api/run/install-browsers');$('detectBrowserBtn').onclick=()=>detectBrowser().catch(e=>toast(e.message));$('saveBrowserPathBtn').onclick=()=>saveBrowserPath().catch(e=>toast(e.message));$('authBtn').onclick=()=>startJob('/api/run/auth');$('validateBtn').onclick=()=>startJob('/api/run/validate',{page:selectedPage()});$('selectorBtn').onclick=()=>startJob('/api/run/check-selectors',{page:selectedPage(),headed:$('headed').value==='true'});$('compareBtn').onclick=$('topRunBtn').onclick;$('stopJobBtn').onclick=stopJob;$('refreshJobsBtn').onclick=()=>refreshJobs(true);$('refreshReportsBtn').onclick=refreshReports;$('newPageBtn').onclick=newPage;$('saveFormBtn').onclick=()=>saveFormPage().catch(e=>toast(e.message));$('saveYamlBtn').onclick=()=>saveYamlPage().catch(e=>toast(e.message));$('importBtn').onclick=()=>importPages().catch(e=>toast(e.message));$('refreshPagesBtn').onclick=refreshPages;$('pageSelect').onchange=()=>loadPage($('pageSelect').value);$('runPageSelect').onchange=()=>{if($('runPageSelect').value)loadPage($('runPageSelect').value)};$('runMode').onchange=refreshPlan;$('refreshManualBtn').onclick=refreshManual;$('saveManualBtn').onclick=()=>saveManual().catch(e=>toast(e.message));
+    refreshAll().catch(e=>toast(e.message));
+  </script>
+</body>
+</html>

@@ -236,6 +236,7 @@ async function attachMetricEvidence(
       const vue2Metric = vue2ByName.get(row.itemName);
       const vue3Metric = vue3ByName.get(row.itemName);
       const selector = vue2Metric?.selector || vue3Metric?.selector;
+      if (!selector) continue;
       const shots: ScreenshotPair = await capturePagePair(
         vue2Page,
         vue3Page,

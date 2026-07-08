@@ -45,7 +45,7 @@ export function parseArgs(argv: string[]): RunContext {
 }
 
 function printHelp(): void {
-  console.log(`\nVue2/Vue3 回归对比工具\n\n常用命令：\n  npm run setup\n  npm run compare -- --page <pageKey> --mode default --headed\n  npm run compare -- --page <pageKey> --mode single-filter --concurrency 2\n\n参数：\n  --page          页面 key，必须精确匹配文件名或配置中的 pageKey\n  --mode          default | single-filter | targeted | smoke | standard | strict\n  --headed        打开浏览器界面，便于调试\n  --config-dir    默认 workspace/pages\n  --output-dir    默认 reports\n  --concurrency   页面级并发数，默认 2\n`);
+  console.log(`\nVue2/Vue3 回归对比工具\n\n常用命令：\n  npm run setup\n  npm run compare -- --page <pageKey> --mode default --headed\n  npm run compare -- --page <pageKey> --mode single-filter --concurrency 2\n  npm run compare -- --page <pageKey> --mode standard --runs 3\n\n参数：\n  --page          页面 key，必须精确匹配文件名或配置中的 pageKey\n  --mode          default | single-filter | targeted | smoke | standard | strict\n  --headed        打开浏览器界面，便于调试\n  --config-dir    默认 workspace/pages\n  --output-dir    默认 reports\n  --concurrency   页面级并发数，默认 2\n  --runs          性能采样次数，N>1 时取 Vue2/Vue3 中位数，默认 1\n`);
 }
 
 export interface LoadedConfigFile {

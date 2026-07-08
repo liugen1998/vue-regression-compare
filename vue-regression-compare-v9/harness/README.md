@@ -69,7 +69,8 @@ corepack pnpm run compare -- --page sample-page --mode standard --headed --concu
 - `reports/<stamp>/report.xlsx`
 - `reports/<stamp>/result.json`
 - `reports/<stamp>/coverage.json`
-- `reports/<stamp>/plan-preview.json`
+
+`coverage.json` 是机器可读覆盖数据；用户报告只展示页面覆盖概览，不展示测试策略预览或详细覆盖表。
 
 报告产物默认视为运行输出，不要为了文档或小修复改动报告目录。
 

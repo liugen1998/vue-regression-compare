@@ -40,8 +40,7 @@ async function main(): Promise<void> {
   console.log(`HTML报告：${path.join(ctx.outputDir, 'report.html')}`);
   console.log(`Excel报告：${path.join(ctx.outputDir, 'report.xlsx')}`);
   console.log(`JSON结果：${path.join(ctx.outputDir, 'result.json')}`);
-  console.log(`覆盖率报告：${path.join(ctx.outputDir, 'coverage.json')}`);
-  console.log(`策略预览：${path.join(ctx.outputDir, 'plan-preview.json')}`);
+  console.log(`页面覆盖数据：${path.join(ctx.outputDir, 'coverage.json')}`);
 }
 
 main().catch(err => {
